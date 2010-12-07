@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<gadget>
+  <name>Thanksgiving Countdown</name>
+  <version>1.0.0.3</version>
+  <author name="AfterHours">
+    <info url="www.afterhours-calc.com" />
+    <logo src="./images/contour2.png" />
+  </author>
+  <copyright>&#169; After Hours - Under GPLv3</copyright>
+  <description>Displays the days until the next thanksgiving.</description>
+  <icons>
+    <icon height="48" width="48" src="./images/thanksgiving.png" />
+  </icons>
+  <hosts>
+    <host name="sidebar">
+      <base type="HTML" apiVersion="1.0.2" src="hello.html" />
+      <permissions>Full</permissions>
+      <platform minPlatformVersion="1.0" />
+      <defaultImage src="./images/thanksgiving.jpg" />
+    </host>
+  </hosts>
+</gadget>

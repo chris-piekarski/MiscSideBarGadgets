@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<gadget>
+  <name>Red Hot Pawn Indicator</name>
+  <version>1.0.0.1</version>
+  <author name="AfterHours - CPiekarski">
+    <info url="www.afterhours-calc.com" />
+    <logo src="./images/contour2.png" />
+  </author>
+  <copyright>&#169; After Hours - Under GPLv3</copyright>
+  <description>Indicates the number of waiting RHP games for the specified user.  Must be logged in to RHP using Microsoft Internet Explorer.</description>
+  <icons>
+    <icon height="48" width="48" src="./images/rhplogo90.jpg" />
+  </icons>
+  <hosts>
+    <host name="sidebar">
+      <base type="HTML" apiVersion="1.0.1" src="hello.html" />
+      <permissions>Full</permissions>
+      <platform minPlatformVersion="1.0" />
+      <defaultImage src="./images/rhplogo90.jpg" />
+    </host>
+  </hosts>
+</gadget>

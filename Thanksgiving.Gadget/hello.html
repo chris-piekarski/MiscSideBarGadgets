@@ -1,0 +1,90 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Thanksgiving Countdown!</title>
+    <style type="text/css">
+        body
+        {
+            position: absolute;
+            margin: 0px;
+            width: 130px;
+            height: 130px;
+            font-family: Comic Sans MS;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        #gadgetContent
+        {
+            position:absolute;
+            top: 40px;
+            left: 35px;
+            margin: 0;
+            color: Black;
+            filter:alpha(opacity=90);
+        }
+    </style>
+    
+    <script type="text/javascript" src="fx.js"></script>
+
+    <script type="text/javascript" language="javascript">
+        // Initialize the gadget.
+        function init() {
+            var today = new Date(); // todays date
+
+            //Thanksgiving is the 4th thursday of the month
+            var thanksgiving = new Date("November 1, " + today.getFullYear());
+            // This year or next year?
+            if (((today.getMonth() == 9) && (today.getDate() > 26)) || today.getMonth() > 9)
+                thanksgiving.setFullYear(today.getFullYear() + 1);
+            else
+                thanksgiving.setFullYear(today.getFullYear());
+           
+            var startDay = thanksgiving.getDay(); //0 is Sunday, 6 is Saturday
+            var extraDays = 5 - startDay; //Friday minus current day to include the first thursday of the month
+            thanksgiving.setDate(21 + extraDays); //3 weeks plus extra week days
+
+            // This year or next year?
+     
+
+            var msPerDay = 24 * 60 * 60 * 1000;
+            var daysLeft = (thanksgiving.getTime() - today.getTime()) / msPerDay;
+            daysLeft = Math.round(daysLeft);
+
+            if (daysLeft == 0)
+                document.getElementById("gadgetContent").innerHTML = "Turkey" + "<br>&nbsp Day!";
+            else {
+                document.getElementById("gadgetContent").innerHTML = daysLeft + "<br>&nbsp Days!";
+                //document.getElementById("gadgetContent").innerHTML = "Debug" + "<br>&nbsp Days!";
+            }
+            
+            //don't use addImageObject in the body section of the document - cause crash!
+            //var txtShadow = imgBackground.addImageObject("./images/thanksgiving.png", 0, 0);
+        }
+        function opUp() {
+            var moveOp2 = { type: 'opacity', from: 20, to: 100, step: 5, delay: 450 };
+            $fx(document.getElementById("Img1")).fxAdd(moveOp2).fxRun(opDown,1,1);
+        }
+        function opDown() {
+            var moveOp1 = { type: 'opacity', from: 100, to: 20, step: -5, delay: 450 };
+            $fx(document.getElementById("Img1")).fxAdd(moveOp1).fxRun(opUp,1,1);
+        }
+        function animation() {
+            opDown();
+        }
+    </script>
+
+</head>
+<body onload="init()">
+    <g:background id="imgBackground" src="./images/thanksgiving.png" 
+        style="position:absolute; top:0; left: 0; width:100%; height:100%;z-index:-999;">
+    </g:background>
+    <img id="Img1" src="images/pumpkin.png" style="position:absolute; top:100; left: 5; width:30px; height:28px;z-index:12;"/>
+    <img id="Img2" src="images/pumpkin.png" style="position:absolute; top:100; left: 75; width:30px; height:28px;z-index:11;"/>
+
+    <div id="gadgetContent"></div>
+    <script type="text/javascript">
+        window.setInterval('init()', 60 * 60 * 1000);
+        animation();
+    </script>
+</body>
+</html>

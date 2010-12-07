@@ -1,0 +1,231 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Red Hot Pawn Sidebar Indicator</title>
+    <style type="text/css">
+        body
+        {
+            position: absolute;
+            margin: 0px;
+            width: 130px;
+            height: 120px;
+            font-family: Comic Sans MS;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        #gadgetContent
+        {
+            position:absolute;
+            top: 10px;
+            left: 12px;
+            width: 16px;
+            height: 16px;
+            text-align:center;
+            margin: 0;
+            color: Black;
+            filter:alpha(opacity=100);
+        }
+        #circle
+        {
+            position:absolute;
+            top: 5px;
+            left: 0px;
+            margin: 0;
+            filter:alpha(opacity=100);
+            z-index: -1;
+        }
+        #countDownString
+        {
+            position:absolute;
+            top: 5px;
+            left: 85px;
+            margin: 0;
+            filter:alpha(opacity=100);
+            z-index: -1;
+            color: Yellow;
+        }
+        #nameS
+        {
+            position:absolute;
+            font-size: 20px;
+            width: 130px;
+            height: 20px;
+            top: 90px;
+            left: opx;
+            color: Yellow;
+            text-align:center;
+            margin: 0;
+            filter:alpha(opacity=100);
+            z-index: 5;
+        }
+    </style>
+    
+    <script type="text/javascript" language="javascript" src="fx.js"></script>
+    <script type="text/javascript" language="javascript" src="./raphael-min.js"></script>
+   	<script language="javascript" src="SettingsManager.js"  type="text/javascript"></script>
+
+    <script type="text/javascript" language="javascript">
+        // ==UserScript==
+        // @name           RHP Move waiting informer
+        // @namespace      http://www.omacmv.com/gmscripts
+        // @description    Informs user when there are games waiting
+        // @include        http://www.redhotpawn.com/mygames/mygames.php
+        // @include        http://www.redhotchess.com/mygames/mygames.php
+        // @include        http://www.timeforchess.com/mygames/mygames.php
+        // @include        http://www.chessatwork.com/mygames/mygames.php
+        // ==/UserScript==
+
+        var updateInterval = 60;
+        var countDownEnabled = true;
+        var countDownMod = 2;
+        var nameFontSize = "20px";
+        var intervalID = 0;
+        var gameIntervalID = 0;
+        System.Gadget.settingsUI = "RHPSettings.html";
+        //System.Gadget.onSettingsClosed = newSettings;
+
+        function newSettings() {
+            SettingsManager.loadFile();
+
+            var eTemp = SettingsManager.getValue("CountDown", "enabled", "true");
+            var rTemp = SettingsManager.getValue("CountDown", "reFreshRateValue", "1");
+            var cTemp = SettingsManager.getValue("CountDown", "gameCheckValue", "60");
+            var fTemp = SettingsManager.getValue("CountDown", "fontSizeValue", "20px");
+            countDownEnabled = eval(eTemp);
+            countDownMod = eval(rTemp);
+            updateInterval = eval(cTemp);
+            nameFontSize = fTemp;
+
+            document.getElementById("nameS").style.fontSize = nameFontSize;
+            /*if (gameIntervalID != 0)
+                clearInterval(gameIntervalID);
+            gameIntervalID = window.setInterval(getGames, updateInterval.valueOf() * 1000);*/
+            
+            if (intervalID != 0) {
+                clearInterval(intervalID);
+            }
+
+            if (eval(countDownEnabled)) {
+                document.getElementById("countDownString").innerHTML = updateInterval;                
+                intervalID = window.setInterval(countDown, countDownMod.valueOf() * 1000);
+            }
+            else
+                document.getElementById("countDownString").innerHTML = "";
+
+            SettingsManager.saveFile();
+        }
+        // Initialize the gadget.
+        function init() {
+            newSettings();
+            
+            //don't use addImageObject in the body section of the document - cause crash!
+            var today = new Date();
+            if(today.getMonth() == 11)
+                var RHPIcon = imgBackground.addImageObject("./images/rhp-xmas.png", 35, 10);
+            else
+                var RHPIcon = imgBackground.addImageObject("./images/rhp.png", 35, 10);
+
+            var raph = Raphael("circle", 40, 40);
+            var circle = raph.circle(20, 20, 15);
+            // Sets the fill attribute of the circle to red (#f00)
+            circle.attr("fill", "#f00");
+            // Sets the stroke attribute of the circle to white (#fff)
+            circle.attr("stroke", "#ff0");
+            circle.attr("stroke-width", 3);
+            circle.show();
+            raph.safari();
+            
+            getGames();
+        }
+
+        function getGames() {
+            var url = "http://www.redhotpawn.com/xml/simple/gameswaitingcount_xml.php";
+            url += "?tstamp=" + new Date().getTime(); //added to get around caching problems
+            makeRequest(url);
+        }
+        
+        function makeRequest(url) {
+        var httpRequest;
+
+        if (window.XMLHttpRequest) { // Mozilla, Safari, ...
+            httpRequest = new XMLHttpRequest();
+            if (httpRequest.overrideMimeType) {
+                httpRequest.overrideMimeType('text/xml');
+                // See note below about this line
+            }
+        } 
+        else if (window.ActiveXObject) { // IE
+            try {
+                httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+            } 
+            catch (e) {
+                try {
+                    httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+                } 
+                catch (e) {}
+            }
+        }
+
+        if (!httpRequest) {
+            alert('Giving up :( Cannot create an XMLHTTP instance');
+            return false;
+        }
+        httpRequest.onreadystatechange = function() { alertContents(httpRequest); };
+        httpRequest.open('GET', url, true);
+        httpRequest.send('');
+    }
+
+    function countDown() {
+        var current = document.getElementById("countDownString").innerHTML;
+        //document.getElementById("nameS").innerHTML = updateInterval;
+
+        if (current > 0){
+            current -= countDownMod;
+            if (current > 0)
+                document.getElementById("countDownString").innerHTML = current;
+            else {
+                getGames();
+                document.getElementById("countDownString").innerHTML = updateInterval;
+            }
+        }
+        else if (current == 0) {
+            getGames();
+            document.getElementById("countDownString").innerHTML = updateInterval;
+        }
+    }
+    
+    function alertContents(httpRequest) {
+        if (httpRequest.readyState == 4) {
+            if (httpRequest.status == 200) {
+                var xmldoc = httpRequest.responseXML;
+                var node = xmldoc.getElementsByTagName('waiting').item(0);
+                if (node) {
+                    var nodeName = xmldoc.getElementsByTagName('mygames').item(0);
+                    // could also use element.getAttribute('user');
+                    var user = nodeName.attributes[1].nodeValue;
+
+                    document.getElementById("gadgetContent").innerHTML = node.firstChild.data;
+                    document.getElementById("nameS").innerHTML = user;
+                }
+                else {
+                    document.getElementById("gadgetContent").innerHTML = 'i';
+                    document.getElementById("nameS").innerHTML = "No Login?";
+                }
+            } else {
+                document.getElementById("gadgetContent").innerHTML = 'i';
+                document.getElementById("nameS").innerHTML = "No Login?";
+            }
+        }
+    }
+    </script>
+</head>
+<body onload="init()" TITLE="Red Hot Pawn" onclick="window.open('http://www.redhotpawn.com')">
+    <g:background id="imgBackground" src="./images/Background.png"
+        style="position:absolute; top:0; left: 0; width:100%; height:100%;z-index:-999;">
+    </g:background>
+    <div id="gadgetContent"></div>
+    <div id="circle"></div>
+    <div id="nameS"></div>
+    <div id="countDownString">0</div>
+</body>
+</html>
