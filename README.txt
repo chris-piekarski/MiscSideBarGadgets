@@ -1,8 +1,6 @@
 Some Windows Sidebar Gadgets
 
-Hack it up code monkey.
-
-POSER
+Hack it up.
 
 
 Red Hot Pawn Gadget:
