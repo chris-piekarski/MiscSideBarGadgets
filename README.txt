@@ -1,3 +1,5 @@
+DEPRECATED REPO
+
 Some Windows Sidebar Gadgets
 
 
